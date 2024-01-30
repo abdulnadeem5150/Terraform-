@@ -29,18 +29,19 @@ resource "azurerm_subnet" "subnets" {
 
 }
 
-resource "azurerm_network_security_group" "webnsg" {
-  name                = "webnsg"
+resource "azurerm_network_security_group" "nsgs" {
+  count               = length(var.name_nsg)
+  name                = var.name_nsg[count.index]
   resource_group_name = azurerm_resource_group.ntire.name
   location            = var.location
   depends_on          = [azurerm_virtual_network.primary]
 }
 
-resource "azurerm_network_security_rule" "web_rules" {
+resource "azurerm_network_security_rule" "rules" {
   count                       = length(var.webnsg_rules_info)
   name                        = var.webnsg_rules_info[count.index].name
   resource_group_name         = azurerm_resource_group.ntire.name
-  network_security_group_name = "webnsg"
+  network_security_group_name = var.webnsg_rules_info[count.index].nsgs_name
   protocol                    = var.webnsg_rules_info[count.index].protocol
   source_port_range           = var.webnsg_rules_info[count.index].source_port_range
   destination_port_range      = var.webnsg_rules_info[count.index].destination_port_range
@@ -49,5 +50,5 @@ resource "azurerm_network_security_rule" "web_rules" {
   destination_address_prefix  = var.webnsg_rules_info[count.index].destination_address_prefix
   access                      = var.webnsg_rules_info[count.index].access
   priority                    = var.webnsg_rules_info[count.index].priority
-  depends_on                  = [azurerm_network_security_group.webnsg]
+  depends_on                  = [azurerm_network_security_group.nsgs]
 }

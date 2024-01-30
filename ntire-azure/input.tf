@@ -21,6 +21,11 @@ variable "subnet_name" {
 
 }
 
+variable "name_nsg" {
+  type    = list(string)
+  default = ["web", "business", "data"]
+}
+
 variable "webnsg_rules_info" {
   type = list(object({
     name                       = string
@@ -32,6 +37,7 @@ variable "webnsg_rules_info" {
     destination_address_prefix = string
     access                     = string
     priority                   = number
+    nsgs_name                  = string
   }))
 
   default = [{
@@ -44,6 +50,7 @@ variable "webnsg_rules_info" {
     direction                  = "Inbound"
     access                     = "Allow"
     priority                   = 300
+    nsgs_name                  = "web"
     },
     {
       name                       = "AllowHttps"
@@ -55,6 +62,7 @@ variable "webnsg_rules_info" {
       direction                  = "Inbound"
       access                     = "Allow"
       priority                   = 310
+      nsgs_name                  = "web"
     }
   ]
 
