@@ -95,3 +95,18 @@ resource "azurerm_network_interface" "datanic" {
   depends_on = [azurerm_subnet.subnets,
   azurerm_network_security_rule.rules]
 }
+
+resource "azurerm_network_interface_security_group_association" "web" {
+  network_interface_id      = azurerm_network_interface.webnic.id
+  network_security_group_id = azurerm_network_security_group.nsgs[0].id
+}
+
+resource "azurerm_network_interface_security_group_association" "business" {
+  network_interface_id      = azurerm_network_interface.businessnic.id
+  network_security_group_id = azurerm_network_security_group.nsgs[1].id
+}
+
+resource "azurerm_network_interface_security_group_association" "data" {
+  network_interface_id      = azurerm_network_interface.datanic.id
+  network_security_group_id = azurerm_network_security_group.nsgs[2].id
+}
