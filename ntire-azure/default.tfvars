@@ -1,8 +1,8 @@
 resource_group_name = "ntire"
 location            = "eastus"
 address_space       = "192.168.0.0/16"
-subnet_names        = ["web", "app", "db"]
-nsgs_name           = ["web", "app", "db"]
+subnet_names        = ["web", "app", "data"]
+nsgs_name           = ["web", "business", "data"]
 
 webnsg_rules_info = [{
   name                       = "AllowHttp"
