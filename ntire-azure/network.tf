@@ -53,8 +53,9 @@ resource "azurerm_network_security_rule" "rules" {
   depends_on                  = [azurerm_network_security_group.nsgs]
 }
 
-resource "azurerm_network_interface" "webnic" {
-  name                = "webnic"
+resource "azurerm_network_interface" "webnics" {
+  count = length(var.network_inter_info)
+  name                = var.network_inter_info[count.index]
   location            = var.location
   resource_group_name = azurerm_resource_group.ntire.name
 
