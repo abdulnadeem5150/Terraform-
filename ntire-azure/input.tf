@@ -67,9 +67,3 @@ variable "webnsg_rules_info" {
   ]
 
 }
-
-  variable "network_inter_info" {
-    type = list(string)
-    default = [ "webnic", "businessnic", "datanic" ]
-    
-  }
