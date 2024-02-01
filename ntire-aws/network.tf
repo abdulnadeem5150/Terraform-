@@ -1,4 +1,4 @@
-resource "aws_vpc" "ntier-primary" {
+resource "aws_vpc" "primary_network" {
   cidr_block = var.vpc_cidr
 
   tags = {
@@ -8,14 +8,14 @@ resource "aws_vpc" "ntier-primary" {
 
 resource "aws_subnet" "subnets" {
   count      = length(var.subnet_names)
-  vpc_id     = aws_vpc.ntier-primary.id
+  vpc_id     = aws_vpc.primary_network.id
   cidr_block = cidrsubnet(var.vpc_cidr, 8, count.index)
   tags = {
     Name = var.subnet_names[count.index]
   }
 }
 module "web_security_group" {
-  source = "./Module/my_security_group"
+  source = "./modules/my_security_group"
   security_group_info = {
     name        = "web"
     description = "this is web security group"
@@ -49,7 +49,7 @@ module "web_security_group" {
 }
 
 module "business_security_group" {
-  source = "./Module/my_security_group"
+  source = "./modules/my_security_group"
   security_group_info = {
     name        = "business"
     description = "this is business security group"
@@ -67,7 +67,7 @@ module "business_security_group" {
 }
 
 module "data_security_group" {
-  source = "./Module/my_security_group"
+  source = "./modules/my_security_group"
   security_group_info = {
     name        = "data"
     description = "this is data security group"
