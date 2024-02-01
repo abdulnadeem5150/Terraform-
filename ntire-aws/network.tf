@@ -23,23 +23,23 @@ module "web_security_group" {
     rules = [{
       from_port   = "22"
       to_port     = "22"
-      type        = "ingress"
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      type        = local.ingress
+      protocol    = local.tcp
+      cidr_blocks = [local.anyware]
       },
       {
         from_port   = "80"
         to_port     = "80"
-        type        = "ingress"
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        type        = local.ingress
+        protocol    = local.tcp
+        cidr_blocks = [local.anyware]
       },
       {
         from_port   = "443"
         to_port     = "443"
-        type        = "ingress"
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        type        = local.ingress
+        protocol    = local.tcp
+        cidr_blocks = [local.anyware]
       }
     ]
   }
@@ -57,10 +57,10 @@ module "business_security_group" {
     rules = [{
       from_port   = "0"
       to_port     = "65535"
-      type        = "ingress"
-      protocol    = "tcp"
+      type        = local.ingress
+      protocol    = local.tcp
       cidr_blocks = [var.vpc_cidr]
-      type        = "ingress"
+    
 
     }]
   }
@@ -75,7 +75,7 @@ module "data_security_group" {
     rules = [{
       from_port   = "0"
       to_port     = "65535"
-      type        = "ingress"
+      type        = local.ingress
       protocol    = "tcp"
       cidr_blocks = [var.vpc_cidr]
       type        = "ingress"
