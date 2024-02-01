@@ -14,3 +14,71 @@ resource "aws_subnet" "subnets" {
     Name = var.subnet_names[count.index]
   }
 }
+module "web_security_group" {
+  source = "./Module/my_security_group"
+  security_group_info = {
+    name        = "web"
+    description = "this is web security group"
+    vpc_id      = aws_vpc.primary_network.id
+    rules = [{
+      from_port   = "22"
+      to_port     = "22"
+      type        = "ingress"
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      },
+      {
+        from_port   = "80"
+        to_port     = "80"
+        type        = "ingress"
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+      },
+      {
+        from_port   = "443"
+        to_port     = "443"
+        type        = "ingress"
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+    ]
+  }
+
+  depends_on = [aws_vpc.primary_network, aws_subnet.subnets]
+
+}
+
+module "business_security_group" {
+  source = "./Module/my_security_group"
+  security_group_info = {
+    name        = "business"
+    description = "this is business security group"
+    vpc_id      = aws_vpc.primary_network.id
+    rules = [{
+      from_port   = "0"
+      to_port     = "65535"
+      type        = "ingress"
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      type        = "ingress"
+
+    }]
+  }
+}
+
+module "data_security_group" {
+  source = "./Module/my_security_group"
+  security_group_info = {
+    name        = "data"
+    description = "this is data security group"
+    vpc_id      = aws_vpc.primary_network.id
+    rules = [{
+      from_port   = "0"
+      to_port     = "65535"
+      type        = "ingress"
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      type        = "ingress"
+    }]
+  }
+}

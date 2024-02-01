@@ -21,31 +21,31 @@ variable "subnet_names" {
 }
 
 variable "aws_security_group" {
-  type = string
+  type    = string
   default = "open-ssh-http"
 }
 
 variable "aws_security_group_ingress_rule" {
   type = list(object({
     ip_protocol = string
-    cidr_ipv4 = string
-    from_port = number
-    to_port = number
+    cidr_ipv4   = string
+    from_port   = number
+    to_port     = number
 
   }))
-  default = [ {
+  default = [{
     ip_protocol = "tcp"
-    cidr_ipv4 = "0.0.0.0/0"
-    from_port = 22
-    to_port = 22
-  },
-  {
-    ip_protocol = "tcp"
-    cidr_ipv4 = "0.0.0.0/0"
-    from_port = 80
-    to_port = 80
-  } 
-]
+    cidr_ipv4   = "0.0.0.0/0"
+    from_port   = 22
+    to_port     = 22
+    },
+    {
+      ip_protocol = "tcp"
+      cidr_ipv4   = "0.0.0.0/0"
+      from_port   = 80
+      to_port     = 80
+    }
+  ]
 
 
 }
