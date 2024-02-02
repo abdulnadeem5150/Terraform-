@@ -7,10 +7,10 @@ terraform {
   }
   // required_version = "> 1.6.0"
   backend "s3" {
-    bucket = "awsexecute.tf"
+    bucket = "myterraformbc"
     key = "file/aws_existing"
     region = "us-west-2"
-    dynamodb_table = "awsdbstate"
+    dynamodb_table = "myterraformdb"
     
   }
 }
