@@ -7,26 +7,26 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_virtual_network" "vnet" {
-  name                = "workshop-network"
-  address_space       = ["10.0.0.0/16"]
+  name                = var.vn_name
+  address_space       = [var.address_space]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   depends_on          = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_subnet" "web" {
-  name                 = "internal"
+  name                 = var.sg_name
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
+  address_prefixes     = [cidrsubnet(var.address_space,1,1)]
   depends_on           = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_public_ip" "webip" {
-  name                = "webip"
+  name                = var.pub_ip.name
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
+  allocation_method   = var.pub_ip.allocation_method
   depends_on          = [azurerm_resource_group.rg]
 
 }
@@ -37,9 +37,9 @@ resource "azurerm_network_interface" "web" {
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = var.net_inter.name
     subnet_id                     = azurerm_subnet.web.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = var.net_inter.private_ip_address_allocation
     public_ip_address_id          = azurerm_public_ip.webip.id
   }
   depends_on = [azurerm_subnet.web, azurerm_public_ip.webip]
@@ -54,9 +54,9 @@ resource "azurerm_linux_virtual_machine" "web" {
   network_interface_ids = [
     azurerm_network_interface.web.id,
   ]
-  admin_username = "Dell"
+  admin_username = "Jarvis"
   admin_ssh_key {
-    username   = "Dell"
+    username   = "Jarvis"
     public_key = file("~/.ssh/id_rsa.pub")
   }
   os_disk {
@@ -73,24 +73,24 @@ resource "azurerm_linux_virtual_machine" "web" {
 
   connection {
     type        = "ssh"
-    user        = "Dell"
+    user        = "Jarvis"
     private_key = file("~/.ssh/id_rsa")
     host        = self.public_ip_address
 
   }
 
   provisioner "file" {
-    source = "springpetclinic.service"
+    source      = "springpetclinic.service"
     destination = "/tmp/springpetclinic.service"
 
   }
 
   provisioner "remote-exec" {
     inline = [
-        "sudo apt update",
-        "sudo apt install openjdk-17-jdk -y",
-        "wget https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/spring-petclinic-3.1.0-SNAPSHOT.jar"
-        ]
+      "sudo apt update",
+      "sudo apt install openjdk-17-jdk -y",
+      "wget https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/spring-petclinic-3.1.0-SNAPSHOT.jar"
+    ]
 
   }
 
