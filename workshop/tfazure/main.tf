@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "rg" {
 
 }
 
-# create a resource for virtual netork
+# create a resource for virtual network
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vn_name
   address_space       = [var.address_space]
@@ -26,7 +26,8 @@ resource "azurerm_subnet" "web" {
   depends_on = [azurerm_virtual_network.vnet]
 }
 
-# create a resource for public ip address
+
+# create a resource for public ip 
 resource "azurerm_public_ip" "webip" {
   name                = var.pub_ip.name
   location            = azurerm_resource_group.rg.location
@@ -36,19 +37,20 @@ resource "azurerm_public_ip" "webip" {
 
 }
 
-# create a resource for network interface
-resource "azurerm_network_interface" "web" {
-  name                = "workshop-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  ip_configuration {
-    name                          = var.net_inter.name
-    subnet_id                     = azurerm_subnet.web.id
-    private_ip_address_allocation = var.net_inter.private_ip_address_allocation
-    public_ip_address_id          = azurerm_public_ip.webip.id
-  }
-  depends_on = [azurerm_subnet.web, azurerm_public_ip.webip]
+# create rules for public ip 
+resource "azurerm_publicip_rules" "rules" {
+  name                        = var.webnsg_rules_info[count.index].name
+  resource_group_name         = azurerm_resource_group.ntire.name
+  network_security_group_name = var.webnsg_rules_info[count.index].nsgs_name
+  protocol                    = var.webnsg_rules_info[count.index].protocol
+  source_port_range           = var.webnsg_rules_info[count.index].source_port_range
+  destination_port_range      = var.webnsg_rules_info[count.index].destination_port_range
+  direction                   = var.webnsg_rules_info[count.index].direction
+  source_address_prefix       = var.webnsg_rules_info[count.index].source_address_prefix
+  destination_address_prefix  = var.webnsg_rules_info[count.index].destination_address_prefix
+  access                      = var.webnsg_rules_info[count.index].access
+  priority                    = var.webnsg_rules_info[count.index].priority
+  depends_on                  = [azurerm_network_security_group.nsgs]
 }
 
 # create a resource for virtual machine
