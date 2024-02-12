@@ -37,22 +37,6 @@ resource "azurerm_public_ip" "webip" {
 
 }
 
-# create rules for public ip 
-resource "azurerm_publicip_rules" "rules" {
-  name                        = var.webnsg_rules_info[count.index].name
-  resource_group_name         = azurerm_resource_group.ntire.name
-  network_security_group_name = var.webnsg_rules_info[count.index].nsgs_name
-  protocol                    = var.webnsg_rules_info[count.index].protocol
-  source_port_range           = var.webnsg_rules_info[count.index].source_port_range
-  destination_port_range      = var.webnsg_rules_info[count.index].destination_port_range
-  direction                   = var.webnsg_rules_info[count.index].direction
-  source_address_prefix       = var.webnsg_rules_info[count.index].source_address_prefix
-  destination_address_prefix  = var.webnsg_rules_info[count.index].destination_address_prefix
-  access                      = var.webnsg_rules_info[count.index].access
-  priority                    = var.webnsg_rules_info[count.index].priority
-  depends_on                  = [azurerm_network_security_group.nsgs]
-}
-
 # create a resource for virtual machine
 resource "azurerm_linux_virtual_machine" "web" {
   name                = "workshop-vm"
